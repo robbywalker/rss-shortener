@@ -1,0 +1,7 @@
+rss-shortener
+
+Open source web server that proxies RSS feeds, and shortens them.
+
+Built with Tornado.
+
+For more information, contact robby.walker+rss@gmail.com
