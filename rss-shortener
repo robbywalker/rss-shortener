@@ -2,7 +2,7 @@
 #
 # rss-shortener
 #
-# chkconfig: - 85 15
+# chkconfig: 2345 84 16
 # description: Start up the RSS Shortener server.
 
 # Source function library
