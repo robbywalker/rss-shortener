@@ -5,3 +5,9 @@ Open source web server that proxies RSS feeds, and shortens them.
 Built with Tornado.
 
 For more information, contact robby.walker+rss@gmail.com
+
+FILES:
+
+server.py - the code
+rss-shortener - a sample init.d script used to run the server at startup
+nginx.conf - a sample nginx.conf file
