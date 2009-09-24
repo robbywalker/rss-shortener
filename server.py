@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import feedparser
+import optparse
+import os
 import xml.sax
 import xml.sax.saxutils
 import tornado.httpclient
@@ -74,6 +76,20 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
+	parser = optparse.OptionParser()
+	parser.add_option("-p", "--port", dest="port", type="int", default=8888,
+	                  help="start on port PORT", metavar="PORT")
+	parser.add_option("-P", "--pid_file", dest="pid_file",
+	                  type="string", default="/tmp/rss-shortener.pid",
+	                  help="save the PID in FILE", metavar="FILE")
+
+	(options, args) = parser.parse_args()
+	
+	pid_file = open(options.pid_file, "w")
+	pid_file.write(str(os.getpid()))
+	pid_file.close()
+
+	print "Listening on port " + str(options.port);
 	http_server = tornado.httpserver.HTTPServer(application)
-	http_server.listen(8888)
+	http_server.listen(options.port)
 	tornado.ioloop.IOLoop.instance().start()
