@@ -13,6 +13,17 @@ PID_FILE="/var/applications/pid/rss_shortener.pid"
 RSS_SHORTENER="/var/applications/rss-shortener"
 
 case "$1" in
+  status)
+	RESULT=`curl -s http://localhost:8888/_/status`
+	if [ "$RESULT" = 'ok' ];
+	  then
+	    echo "OK"
+	    exit 0
+	  else
+	    echo "Not OK"
+	    exit 1
+	fi	
+	
   start)
 	if [ -f $RSS_SHORTENER/server.py ];
 	  then
