@@ -12,33 +12,58 @@ RETVAL=$?
 PID_FILE="/var/applications/pid/rss_shortener.pid"
 RSS_SHORTENER="/var/applications/rss-shortener"
 
+start() {
+  [ -x $RSS_SHORTENER/server.py ] || exit 5
+  echo -n "Starting Tornado: "
+  daemon $"daemonize -u tornado -p $PID_FILE $RSS_SHORTENER/server.py"
+  echo
+  return $retval  
+}
+
+stop() {
+  echo -n $"Stopping Tornado"
+  killproc -p $PID_FILE python
+  echo
+}
+
+status() {
+  RESULT=`curl -s http://localhost:8888/_/status`
+  if [ "$RESULT" = 'ok' ];
+  then
+    echo "OK"
+    return 0
+  else
+    echo "Not OK"
+    return 1
+  fi
+}
+
+status_quiet() {
+  status >/dev/null 2>&1
+}
+
 case "$1" in
   status)
-	RESULT=`curl -s http://localhost:8888/_/status`
-	if [ "$RESULT" = 'ok' ];
-	  then
-	    echo "OK"
-	    exit 0
-	  else
-	    echo "Not OK"
-	    exit 1
-	fi
-	;;	
+	status
+	;;
   start)
-	if [ -f $RSS_SHORTENER/server.py ];
-	  then
-	    echo -n "Starting Tornado: "
-	    daemon $"daemonize -u tornado -p $PID_FILE $RSS_SHORTENER/server.py"
-	    echo
-	fi
+	status_quiet && echo "Service already running" && exit 0
+	start
 	;;
   stop)
-	echo -n $"Stopping Tornado"
-	killproc -p $PID_FILE python
-	echo
+	if ! status_quiet;
+	then
+		echo "Service not running"
+		exit 0
+	fi
+	stop
+	;;
+  restart)
+	stop
+	start
 	;;
   *)
-	echo $"Usage: $0 {start|stop}"
+	echo $"Usage: $0 {start|stop|status|restart}"
 	exit 1
 	;;
 esac
