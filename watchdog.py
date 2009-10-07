@@ -8,17 +8,22 @@
 
 from email.mime.text import MIMEText
 import optparse
+import os
 import smtplib
 import subprocess
 
 
-COMMAND_TEMPLATE = "service rss-shortener %s"
+COMMAND = ["service", "rss-shortener"]
+
+def call(command):
+	devnull = open(os.devnull, "w")
+	return not subprocess.call(COMMAND + [command], stdout=devnull, stderr=devnull)
 
 def status():
-	return subprocess.call(COMMAND_TEMPLATE % "status")
+	return call("status")
 
 def start():
-	return subprocess.call(COMMAND_TEMPLATE % "start")
+	return call("start")
 
 class GmailServer(object):
 	def __init__(self, fromAddress, password):

@@ -8,7 +8,6 @@
 # Source function library
 . /etc/init.d/functions
 
-RETVAL=$?
 PID_FILE="/var/applications/pid/rss_shortener.pid"
 RSS_SHORTENER="/var/applications/rss-shortener"
 
@@ -16,6 +15,7 @@ start() {
   [ -x $RSS_SHORTENER/server.py ] || exit 5
   echo -n "Starting Tornado: "
   daemon $"daemonize -u tornado -p $PID_FILE $RSS_SHORTENER/server.py"
+  retval=$?
   echo
   return $retval  
 }
@@ -23,7 +23,9 @@ start() {
 stop() {
   echo -n $"Stopping Tornado"
   killproc -p $PID_FILE python
+  retval=$?
   echo
+  return $retval
 }
 
 status() {
@@ -67,6 +69,4 @@ case "$1" in
 	exit 1
 	;;
 esac
-
-exit $RETVAL
 
