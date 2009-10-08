@@ -11,9 +11,10 @@ import optparse
 import os
 import smtplib
 import subprocess
+import time
 
 
-COMMAND = ["service", "rss-shortener"]
+COMMAND = ["/sbin/service", "rss-shortener"]
 
 def call(command):
 	devnull = open(os.devnull, "w")
@@ -57,6 +58,8 @@ if __name__ == "__main__":
 	                  help="send email to TO", metavar="TO")
 	(options, args) = parser.parse_args()
 
+	print "Running at %s with args %r" % (time.ctime(), options)
+
 	message = []
 	if not status():
 		message.append('Server is not running.')
@@ -64,7 +67,12 @@ if __name__ == "__main__":
 			message.append('Restarted successfully')
 		else:
 			message.append('Server would not restart')
+	message = '\n'.join(message)
 
-	if len(message):
+	if message:
+		print message
 		server = GmailServer(options.fromAddress, options.password)
-		server.send(options.to, 'rss-shortener watchdog', '\n'.join(message))
+		server.send(options.to, 'rss-shortener watchdog', message)
+
+	print
+
